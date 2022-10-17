@@ -30,7 +30,7 @@ class FileOperation:
         self.data_path = data_path
         self.logger = Logger(self.run_id, 'FileOperation', mode)
 
-    def save_model(self, model, filename):    # sourcery skip: raise-specific-error
+    def save_model(self, model, filename):
         """
         Method to save the model file.
         Args:
@@ -75,4 +75,33 @@ class FileOperation:
                 return pickle.load(f)
         except Exception as e:
             self.logger.exception(f'Exception raised while loading model: {e}')
+            raise Exception() from e
+
+    def correct_model(self, cluster_number):
+        # sourcery skip: raise-specific-error
+        """
+        Method to find the best model
+
+        Args:
+            cluster_number(int): Cluster with the best model
+        Returns:
+            model: The best model file
+        """
+        try:
+            self.logger.info('Start finding the best model')
+            self.cluster_number = cluster_number
+            self.folder_name = 'apps/models'
+            self.list_of_model_files = []
+            self.list_of_files = os.listdir(self.folder_name)
+            for self.file in self.list_of_files:
+                try:
+                    if (self.file.index(str(self.cluster_number)) != -1):
+                        self.model_name = self.file
+                except Exception:
+                    continue
+            self.model_name = self.model_name.split('.')[0]
+            self.logger.info('End of finding the correct model')
+            return self.model_name
+        except Exception as e:
+            self.logger.info(f'Exception raised while finding the correct model{str(e)}')
             raise Exception() from e
