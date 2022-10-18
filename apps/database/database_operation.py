@@ -130,3 +130,38 @@ class DataBaseOperation:
                 conn.close()
         conn.close()
         self.logger.info('End of Inserting Data into Table...')
+
+
+        def export_csv(self, database_name, table_name):
+            """
+            Method to export database as CSV
+
+            Args:
+                database_name(string): The name of the db to be exported
+                table_name(string): The name of table in the db
+            Returns:
+                None
+            """
+            self.file_from_db = f'{self.data_path}_validation/'
+            self.file_name = 'InputFile.csv'
+            try:
+                self.logger.info('Start of export csv')
+                conn = self.database_connection(database_name)
+                sqlSelect = f"SELECT * FROM {table_name}"
+                cursor = conn.cursor()
+                cursor.execute(sqlSelect)
+                results = cursor.fetchall()
+                # Get the headers of the csv file
+                headers = [i[0] for i in cursor.description]
+                # Make the output directory for the CSV
+                if not os.path.isdir(self.file_from_db):
+                    os.makedirs(self.file_from_db)
+                # Open csv file and write to it
+                csv_file = csv.writer(open(self.file_from_db + self.file_name, 'w', newline=''),delimiter=',', lineterminator='\r\n',quoting=csv.QUOTE_ALL, escapechar='\\')
+                # Add header and data to csv
+                csv_file.writerow(headers)
+                csv_file.writerow(results)
+                self.logger.info('End of writing to csv')
+            except Exception as e:
+                self.logger.exception(f'Exception raised while exporting data to csv: {e}')
+
