@@ -2,6 +2,9 @@ from wsgiref import simple_server
 from flask import Flask, request, render_template
 from flask import  Response
 from flask_cors import CORS, cross_origin
+from apps.training.train_model import TrainModel
+
+from apps.core.config import Config
 
 app = Flask(__name__)
 CORS(app)
@@ -9,8 +12,25 @@ CORS(app)
 @app.route('/training', methods=['POST'])
 @cross_origin()
 def training_route_client():
+    """
+    Method that handles the training process
+
+    Args:
+        None
+    Returns:
+        None
+    """
+
     try:
-        return Response('Training successful')
+        config = Config()
+        run_id = config.get_run_id() # Get the run id of the training
+        data_path = config.training_data_path # Declare the data path
+        # Initialize the train model object
+        trainModel = TrainModel(run_id, data_path)
+        # Start the training process
+        trainModel.training_model()
+        return Response(f'Training process with run_id: {run_id} was successful')
+
     except ValueError:
         return Response(f'Error occured! {ValueError}')
     except KeyError:
