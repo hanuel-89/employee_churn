@@ -1,5 +1,5 @@
 from datetime import datetime
-from logger import Logger
+from apps.core.logger import Logger
 import os
 import pickle
 import shutil
@@ -56,7 +56,7 @@ class FileOperation:
             return 'success'
         except Exception as e:
             self.logger.exception(f'Exception raised while trying to save model: {e}')
-            raise Exception() from e
+            raise e
 
     def load_model(self, filename):  # sourcery skip: raise-specific-error
         """

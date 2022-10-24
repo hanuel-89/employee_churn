@@ -39,12 +39,13 @@ class Preprocessor:
         Args:
             None
         Returns:
-            None
+            A pandas DataFrame
         """
         try:
             self.logger.info('Start: Reading the dataset')
             self.data = pd.read_csv(f'{self.data_path}_validation/InputFile.csv')
             self.logger.info('End: Reading the dataset')
+            return self.data
         except Exception as e:
             self.logger.info(f'Error raised while reading the dataset: {e}')
             raise e
@@ -97,6 +98,7 @@ class Preprocessor:
                 df_with_null_values['count_missing_values'] = np.asarray(data.isna().sum())
                 df_with_null_values.to_csv(f'{self.data_path}_validation/null_values.csv') # Save the df to CSV
             self.logger.info('End: Checking for null values')
+            return self.null_present
         except Exception as e:
             self.logger.info(f'Error raised while cheking for null values: {e}')
             raise e
@@ -193,9 +195,10 @@ class Preprocessor:
             df_new = pd.concat([df, data], ignore_index=True, sort=False)
             data_new = df_new.fillna(0) # Fill the missing values with 0
             self.logger.info('End: Building final predict set')
-        except ValueError:
+            return data_new
+        except ValueError as e:
             self.logger.exception('ValueError raised while building final predictset')
-            raise ValueError
+            raise ValueError from e
         except KeyError:
             self.logger.exception('KeyError raised while building final predictset')
             raise KeyError
@@ -303,3 +306,4 @@ class Preprocessor:
             return data
         except Exception as e:
             self.logger.exception(f'Exception raised while preprocessing training data: {e}')
+            raise e

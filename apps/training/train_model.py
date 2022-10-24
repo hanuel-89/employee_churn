@@ -51,14 +51,13 @@ class TrainModel:
             None
         """
         try:
-
             self.logger.info('----- Start of Training Process -----')
             self.logger.info(f'Run_ID: {self.run_id}')
             # Load, validate, and tranform the training dataset
             self.loadValidate.validate_trainset()
             # Training data preprocessing activities
-            self.X, self.y = self.Preprocessor.preprocess_trainset()
-            columns = {'data_columns': list(self.X.columns)}
+            self.X, self.y = self.preProcess.preprocess_trainset()
+            columns = {'data_columns':[col for col in self.X.columns]}
             with open('apps/database/columns.json', 'w') as f:
                 f.write(json.dumps(columns))
             # Create the clusters

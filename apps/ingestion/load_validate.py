@@ -7,7 +7,7 @@ import os
 
 import pandas as pd
 
-from apps.database.database_operation import DataBaseOperation as dbOperation
+from apps.database.database_operation import DataBaseOperation
 from apps.core.logger import Logger
 
 class LoadValidate:
@@ -36,6 +36,7 @@ class LoadValidate:
         self.run_id = run_id
         self.data_path = data_path
         self.logger = Logger(self.run_id, self.data_path, mode)
+        self.dbOperation = DataBaseOperation(self.run_id, self.data_path, mode)
 
 
     def values_from_schema(self, schema_file):
@@ -142,6 +143,7 @@ class LoadValidate:
             self.logger.info('End of replacing missing values with NULL')
         except Exception as e:
             self.logger.exception(f'Error raised while replacing missing values: {e}')
+            raise e
 
 
     def archive_old_files(self):
@@ -319,6 +321,7 @@ class LoadValidate:
         except Exception as e:
             self.logger.exception(f'Error occurred while validating the predictiong dataset: {e}')
             raise e
+
 
 
 
