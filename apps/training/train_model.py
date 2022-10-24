@@ -57,7 +57,7 @@ class TrainModel:
             self.loadValidate.validate_trainset()
             # Training data preprocessing activities
             self.X, self.y = self.preProcess.preprocess_trainset()
-            columns = {'data_columns':[col for col in self.X.columns]}
+            columns = {'data_columns': list(self.X.columns)}
             with open('apps/database/columns.json', 'w') as f:
                 f.write(json.dumps(columns))
             # Create the clusters
